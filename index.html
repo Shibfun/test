@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WoofBot Test Page</title>
+    <title>WoofBot Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,94 +12,42 @@
             background-color: #f5f5f5;
             margin: 0;
         }
-        h1 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        p {
-            font-size: 16px;
-            color: #666;
-            margin: 5px 0;
-        }
-        #status {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #ff4d4f;
-        }
-        #userInfo, #debugInfo {
-            margin-top: 20px;
-            text-align: left;
-            max-width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        #userInfo h2, #debugInfo h2 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        #userInfo p, #debugInfo p {
-            font-size: 16px;
-            color: #666;
-            margin: 5px 0;
-        }
+        h1 { font-size: 24px; color: #333; }
+        p { font-size: 16px; color: #666; margin: 5px 0; }
+        #status { margin-top: 10px; font-size: 16px; color: #ff4d4f; }
+        #info { margin-top: 20px; text-align: left; max-width: 90%; margin-left: auto; margin-right: auto; }
+        #info h2 { font-size: 20px; color: #333; }
     </style>
 </head>
 <body>
-    <h1>WoofBot Test Page</h1>
-    <p>Testing Telegram Mini App Environment</p>
-    <div id="status"></div>
-
-    <div id="userInfo">
-        <h2>User Information</h2>
+    <h1>WoofBot Test</h1>
+    <p>Telegram Mini App Test</p>
+    <div id="status">Loading...</div>
+    <div id="info">
+        <h2>User Info</h2>
         <p>Username: <span id="userName">Loading...</span></p>
         <p>User ID: <span id="userId">Loading...</span></p>
         <p>First Name: <span id="firstName">Loading...</span></p>
         <p>Last Name: <span id="lastName">Loading...</span></p>
-        <p>Language Code: <span id="languageCode">Loading...</span></p>
-        <p>Is Premium User: <span id="isPremium">Loading...</span></p>
-    </div>
-
-    <div id="debugInfo">
-        <h2>Debug Information</h2>
-        <p>Telegram Initialization Status: <span id="telegramStatus">Checking...</span></p>
-        <p>initData: <span id="initData">Checking...</span></p>
-        <p>Current URL: <span id="currentUrl">Checking...</span></p>
-        <p>Browser Environment: <span id="browserEnv">Checking...</span></p>
-        <p>Page Load Time: <span id="loadTime">Checking...</span></p>
+        <p>Language: <span id="languageCode">Loading...</span></p>
+        <p>Premium: <span id="isPremium">Loading...</span></p>
+        <p>initData: <span id="initData">Loading...</span></p>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        document.getElementById('loadTime').innerText = new Date().toLocaleString();
-        
-        const statusElement = document.getElementById('status');
-        const telegramStatusElement = document.getElementById('telegramStatus');
-        const initDataElement = document.getElementById('initData');
-        const currentUrlElement = document.getElementById('currentUrl');
-        const browserEnvElement = document.getElementById('browserEnv');
-
-        currentUrlElement.innerText = window.location.href;
-        const isTelegramEnv = navigator.userAgent.includes('Telegram');
-        browserEnvElement.innerText = isTelegramEnv ? "Telegram Environment" : "Non-Telegram Environment";
-
+        const status = document.getElementById('status');
         if (!window.Telegram || !window.Telegram.WebApp) {
-            statusElement.innerText = "Error: Telegram Web App initialization failed. Please open in Telegram.";
-            telegramStatusElement.innerText = "Failed - Telegram object not found";
-            initDataElement.innerText = "Not retrieved";
+            status.innerText = "Error: Please open in Telegram";
             return;
         }
 
         const Telegram = window.Telegram.WebApp;
         Telegram.ready();
-        telegramStatusElement.innerText = "Success";
 
         const user = Telegram.initDataUnsafe?.user;
         if (!user || !user.id) {
-            statusElement.innerText = "Error: Unable to retrieve user ID. Please open in Telegram.";
-            telegramStatusElement.innerText = "Failed - Unable to retrieve user ID";
-            initDataElement.innerText = "Not retrieved";
+            status.innerText = "Error: No user data available";
             return;
         }
 
@@ -109,11 +57,10 @@
         document.getElementById('lastName').innerText = user.last_name || "Not set";
         document.getElementById('languageCode').innerText = user.language_code || "Unknown";
         document.getElementById('isPremium').innerText = user.is_premium ? "Yes" : "No";
+        document.getElementById('initData').innerText = Telegram.initData || "No data";
 
-        initDataElement.innerText = Telegram.initData || "No data";
-
-        statusElement.innerText = "Successfully retrieved user information!";
-        statusElement.style.color = "#28a745";
+        status.innerText = "Success!";
+        status.style.color = "#28a745";
     </script>
 </body>
 </html>
