@@ -10,13 +10,13 @@
             text-align: center;
             padding: 20px;
             background-color: #f5f5f5;
-            margin: 0;
         }
-        h1 { font-size: 24px; color: #333; }
-        p { font-size: 16px; color: #666; margin: 5px 0; }
-        #status { margin-top: 10px; font-size: 16px; color: #ff4d4f; }
-        #info { margin-top: 20px; text-align: left; max-width: 90%; margin-left: auto; margin-right: auto; }
-        #info h2 { font-size: 20px; color: #333; }
+        h1 { color: #333; }
+        p { color: #666; margin: 5px 0; }
+        #status { margin: 10px 0; font-size: 18px; }
+        #info { max-width: 90%; margin: 20px auto; text-align: left; }
+        .success { color: #28a745; }
+        .error { color: #ff4d4f; }
     </style>
 </head>
 <body>
@@ -37,30 +37,39 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const status = document.getElementById('status');
-        if (!window.Telegram || !window.Telegram.WebApp) {
-            status.innerText = "Error: Please open in Telegram";
-            return;
+        const updateInfo = (key, value) => {
+            document.getElementById(key).innerText = value;
+        };
+
+        try {
+            if (!window.Telegram || !window.Telegram.WebApp) {
+                throw new Error("Telegram Web App not found. Please open in Telegram.");
+            }
+
+            const Telegram = window.Telegram.WebApp;
+            Telegram.ready();
+
+            const initData = Telegram.initData || "No initData";
+            updateInfo("initData", initData);
+
+            const user = Telegram.initDataUnsafe?.user;
+            if (!user || !user.id) {
+                throw new Error("No user data available.");
+            }
+
+            updateInfo("userId", user.id);
+            updateInfo("userName", user.username ? `@${user.username}` : "Not set");
+            updateInfo("firstName", user.first_name || "Not set");
+            updateInfo("lastName", user.last_name || "Not set");
+            updateInfo("languageCode", user.language_code || "Unknown");
+            updateInfo("isPremium", user.is_premium ? "Yes" : "No");
+
+            status.innerText = "Success!";
+            status.className = "success";
+        } catch (error) {
+            status.innerText = `Error: ${error.message}`;
+            status.className = "error";
         }
-
-        const Telegram = window.Telegram.WebApp;
-        Telegram.ready();
-
-        const user = Telegram.initDataUnsafe?.user;
-        if (!user || !user.id) {
-            status.innerText = "Error: No user data available";
-            return;
-        }
-
-        document.getElementById('userId').innerText = user.id;
-        document.getElementById('userName').innerText = user.username ? `@${user.username}` : "Not set";
-        document.getElementById('firstName').innerText = user.first_name || "Not set";
-        document.getElementById('lastName').innerText = user.last_name || "Not set";
-        document.getElementById('languageCode').innerText = user.language_code || "Unknown";
-        document.getElementById('isPremium').innerText = user.is_premium ? "Yes" : "No";
-        document.getElementById('initData').innerText = Telegram.initData || "No data";
-
-        status.innerText = "Success!";
-        status.style.color = "#28a745";
     </script>
 </body>
 </html>
