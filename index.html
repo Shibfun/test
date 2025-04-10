@@ -70,26 +70,20 @@
         <p>Page Load Time: <span id="loadTime">Checking...</span></p>
     </div>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Record page load time
-        const loadTimeElement = document.getElementById('loadTime');
-        loadTimeElement.innerText = new Date().toLocaleString();
-
-        // Telegram Web App initialization
+        document.getElementById('loadTime').innerText = new Date().toLocaleString();
+        
         const statusElement = document.getElementById('status');
         const telegramStatusElement = document.getElementById('telegramStatus');
         const initDataElement = document.getElementById('initData');
         const currentUrlElement = document.getElementById('currentUrl');
         const browserEnvElement = document.getElementById('browserEnv');
 
-        // Display current URL (for debugging)
         currentUrlElement.innerText = window.location.href;
-
-        // Check browser environment (for debugging)
         const isTelegramEnv = navigator.userAgent.includes('Telegram');
-        browserEnvElement.innerText = isTelegramEnv ? "Telegram Environment" : "Non-Telegram Environment (possibly a browser)";
+        browserEnvElement.innerText = isTelegramEnv ? "Telegram Environment" : "Non-Telegram Environment";
 
-        // Check if Telegram Web App is available
         if (!window.Telegram || !window.Telegram.WebApp) {
             statusElement.innerText = "Error: Telegram Web App initialization failed. Please open in Telegram.";
             telegramStatusElement.innerText = "Failed - Telegram object not found";
@@ -101,7 +95,6 @@
         Telegram.ready();
         telegramStatusElement.innerText = "Success";
 
-        // Retrieve user information
         const user = Telegram.initDataUnsafe?.user;
         if (!user || !user.id) {
             statusElement.innerText = "Error: Unable to retrieve user ID. Please open in Telegram.";
@@ -110,28 +103,17 @@
             return;
         }
 
-        // Display user information
-        const userId = user.id;
-        const userName = user.username ? `@${user.username}` : "Not set";
-        const firstName = user.first_name || "Not set";
-        const lastName = user.last_name || "Not set";
-        const languageCode = user.language_code || "Unknown";
-        const isPremium = user.is_premium ? "Yes" : "No";
+        document.getElementById('userId').innerText = user.id;
+        document.getElementById('userName').innerText = user.username ? `@${user.username}` : "Not set";
+        document.getElementById('firstName').innerText = user.first_name || "Not set";
+        document.getElementById('lastName').innerText = user.last_name || "Not set";
+        document.getElementById('languageCode').innerText = user.language_code || "Unknown";
+        document.getElementById('isPremium').innerText = user.is_premium ? "Yes" : "No";
 
-        document.getElementById('userId').innerText = userId;
-        document.getElementById('userName').innerText = userName;
-        document.getElementById('firstName').innerText = firstName;
-        document.getElementById('lastName').innerText = lastName;
-        document.getElementById('languageCode').innerText = languageCode;
-        document.getElementById('isPremium').innerText = isPremium;
+        initDataElement.innerText = Telegram.initData || "No data";
 
-        // Display initData (for debugging)
-        const initData = Telegram.initData || "No data";
-        initDataElement.innerText = initData;
-
-        // Success message
         statusElement.innerText = "Successfully retrieved user information!";
-        statusElement.style.color = "#28a745"; // Green color for success
+        statusElement.style.color = "#28a745";
     </script>
 </body>
 </html>
